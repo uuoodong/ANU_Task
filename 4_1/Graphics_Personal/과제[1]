@@ -1,0 +1,33 @@
+1. 과제제출 - 고양이 배경화면에 캐릭터들이 랜덤하게 이동합니다.(웹툰캐릭터입니다)
+PImage img,img2, back;
+float x=0;
+float y=0;
+void setup() {
+  size(640, 640);
+  img=loadImage("C:\\\\Users\\\\woodong\\\\Desktop\\\\processing-3.5.3\\\\re3.png");
+  back=loadImage("C:\\\\Users\\\\woodong\\\\Desktop\\\\processing-3.5.3\\\\poro.jpg");
+  img2=loadImage("C:\\\\Users\\\\woodong\\\\Desktop\\\\processing-3.5.3\\\\re4.png");
+  background(0);
+}
+void draw() {
+  x= random(50, 640);
+  y = random(50, 640);
+  image(back,0, 0, 640, 640);
+  image(img, y, x, 100, 100);
+  image(img2, x, y, 100, 100);
+  image(img, y-x, x-y, 100, 100);
+  image(img2, x-y, y-x, 100, 100);
+  image(img, y-100, x-100, 100, 100);
+  image(img2, x-100, y-100, 100, 100);
+  image(img, y-x+100, x-y+100, 100, 100);
+  image(img2, x-y+100, y-x+100, 100, 100);
+  delay(100);
+}
+
+2. 과제소감 
+수업을 통해서 프로세싱이라는 툴을알게되었습니다. 이 수업을 통해서 평소에는 웹에 관심이 많았지만 
+이번 기회를 통해 프로세싱의 애니메이션에 대해서도 관심이 생기게 되었습니다. 특히나 재미있는 
+수업을 할 수 있어서 좋았습니다. 이번 시간은 병결로 인해 참여하지 못했지만 혼자 해도 재미있을
+정도로 흥미로운 툴이라고 생각합니다. 감사합니다.
+3. 시나리오
+고양이를 만지고싶은 저의 욕심을 반영했습니다. 욕심의 정도만큼 많은 캐릭터를 등장시켰습니다.

@@ -1,0 +1,129 @@
+유튜브 링크 : https://youtu.be/zXCQPgSWaGU
+1. 초기 통신 테스트
+void setup() {
+Serial.begin(9600);
+}
+long t;
+void loop() {
+if(millis()-t>=100){
+Serial.println((rand()%255+1));
+t = millis();
+}
+}
+import processing.serial.*;
+Serial p;
+void setup(){
+size(500,500);
+p = new Serial(this, "COM5",9600);
+}
+void draw(){
+if(p.available()>0){
+String m = p.readString();
+m = m.trim();
+float a = float(m);
+println(a);
+}
+}
+1. 아두이노에서 1초에 1씩 증가한 숫자 전송 초기값 1
+2. 프로세싱에서 수신한 값만큼 ball생성
+3. 소감 : 팀원들과 함께 아두이노와 프로세싱을 연결하는 과정을 공부하고 프로세싱에서 수업했던 내용을 활용해서 아두이노에서 숫자를 받아들여서 색을 나타내는 코딩을 하였습니다
+프로세싱 코드
+import processing.serial.*;
+Serial p;
+int numBalls = 1;
+float spring = 0.05;
+float gravity = 0.03;
+float friction = -0.9;
+Ball[] balls = new Ball[256];
+void setup() {
+  size(640, 360);
+  p = new Serial(this, "COM5",9600);
+  //for (int i = 0; i < numBalls; i++) {
+    balls[0] = new Ball(random(width), random(height), random(30, 70), numBalls, balls);
+  //}
+  noStroke();
+  fill(255, 204);
+}
+void draw() {
+  background(0);
+  if(p.available()>0){
+    String m = p.readString();
+    m = m.trim();
+    numBalls = int(m);
+    println(numBalls);
+    balls[numBalls] = new Ball(random(width), random(height), random(30, 70), numBalls, balls);
+  }
+  for (int i = 0; i<numBalls; i++) {
+    balls[i].collide();
+    balls[i].move();
+    balls[i].display();  
+  }
+}
+class Ball {
+  
+  float x, y;
+  float diameter;
+  float vx = 0;
+  float vy = 0;
+  int id;
+  Ball[] others;
+ 
+  Ball(float xin, float yin, float din, int idin, Ball[] oin) {
+    x = xin;
+    y = yin;
+    diameter = din;
+    id = idin;
+    others = oin;
+  } 
+  
+  void collide() {
+    for (int i = id + 1; i < numBalls; i++) {
+      float dx = others[i].x - x;
+      float dy = others[i].y - y;
+      float distance = sqrt(dx*dx + dy*dy);
+      float minDist = others[i].diameter/2 + diameter/2;
+      if (distance < minDist) { 
+        float angle = atan2(dy, dx);
+        float targetX = x + cos(angle) * minDist;
+        float targetY = y + sin(angle) * minDist;
+        float ax = (targetX - others[i].x) * spring;
+        float ay = (targetY - others[i].y) * spring;
+        vx -= ax;
+        vy -= ay;
+        others[i].vx += ax;
+        others[i].vy += ay;
+      }
+    }   
+  }
+  
+  void move() {
+    vy += gravity;
+    x += vx;
+    y += vy;
+    if (x + diameter/2 > width) {
+      x = width - diameter/2;
+      vx *= friction; 
+    }
+    else if (x - diameter/2 < 0) {
+      x = diameter/2;
+      vx *= friction;
+    }
+    if (y + diameter/2 > height) {
+      y = height - diameter/2;
+      vy *= friction; 
+    } 
+    else if (y - diameter/2 < 0) {
+      y = diameter/2;
+      vy *= friction;
+    }
+  }
+  
+  void display() {
+    float r=random(255);
+    float g=random(255);
+    float b=random(255);
+    stroke(r, g, b);
+    fill(r, g, b);
+    ellipse(x, y, diameter, diameter);
+  }
+}
